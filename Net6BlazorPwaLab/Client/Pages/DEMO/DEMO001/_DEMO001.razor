@@ -1,5 +1,5 @@
 ﻿@page "/demo001"
-@inject HttpClient Http
+@inject WebApiService apiSvc
 
 <PageTitle>DEMO001</PageTitle>
 
@@ -43,12 +43,6 @@
 
     async Task HandleClick(MouseEventArgs e)
     {
-        var resp = await Http.PostAsJsonAsync("api/MyData/QryDataList", new MyFormDataQryArgs());
-        if (resp.IsSuccessStatusCode)
-            dataList = await resp.Content.ReadFromJsonAsync<List<MyFormData>>();
-        else
-            message = await resp.Content.ReadAsStringAsync();
-
-        //dataList = await Http.GetFromJsonAsync<List<MyFormData>>("WeatherForecast");
+        dataList = await apiSvc.PostDataAsync<List<MyFormData>>("api/MyData/QryDataList");
     }
 }

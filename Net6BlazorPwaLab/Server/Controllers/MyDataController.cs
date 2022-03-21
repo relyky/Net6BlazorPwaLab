@@ -10,7 +10,7 @@ namespace Net6BlazorPwaLab.Server.Controllers;
 public class MyDataController : ControllerBase
 {
   [HttpPost("[action]")]
-  public List<MyFormData> QryDataList(MyFormDataQryArgs args)
+  public List<MyFormData> QryDataList()
   {
     return simsMyDataTable;
   }
