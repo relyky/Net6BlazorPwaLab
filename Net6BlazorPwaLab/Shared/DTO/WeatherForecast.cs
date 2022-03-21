@@ -1,4 +1,4 @@
-namespace Net6BlazorPwaLab.Shared
+namespace Net6BlazorPwaLab.DTO
 {
     public class WeatherForecast
     {

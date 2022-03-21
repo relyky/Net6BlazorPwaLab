@@ -1,0 +1,54 @@
+﻿@page "/demo001"
+@inject HttpClient Http
+
+<PageTitle>DEMO001</PageTitle>
+
+<h3>_DEMO001</h3>
+
+<button class="btn btn-primary" @onclick=HandleClick>刷新</button>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Nid</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in dataList)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Gender</td>
+                <td>@item.Nid</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<pre>
+    @message
+</pre>
+
+@code {
+    private List<MyFormData>? dataList = new();
+    string message = String.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        //dataList = await Http.GetFromJsonAsync<List<MyFormData>>("WeatherForecast");
+    }
+
+    async Task HandleClick(MouseEventArgs e)
+    {
+        var resp = await Http.PostAsJsonAsync("api/MyData/QryDataList", new MyFormDataQryArgs());
+        if (resp.IsSuccessStatusCode)
+            dataList = await resp.Content.ReadFromJsonAsync<List<MyFormData>>();
+        else
+            message = await resp.Content.ReadAsStringAsync();
+
+        //dataList = await Http.GetFromJsonAsync<List<MyFormData>>("WeatherForecast");
+    }
+}

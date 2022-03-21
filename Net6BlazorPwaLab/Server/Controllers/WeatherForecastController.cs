@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Net6BlazorPwaLab.Shared;
+using Net6BlazorPwaLab.DTO;
 
 namespace Net6BlazorPwaLab.Server.Controllers
 {
