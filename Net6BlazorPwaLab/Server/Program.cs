@@ -2,14 +2,16 @@ using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+#region ## Add services to the container. -------------------------------------
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+#endregion --------------------------------------------------------------------
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+#region ## Configure the HTTP request pipeline. -------------------------------
 if (app.Environment.IsDevelopment())
 {
   app.UseWebAssemblyDebugging();
@@ -28,9 +30,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-
+//## Endpoints
 app.MapRazorPages();
-app.MapControllers();
+app.MapControllers(); // for enable WebApi
 app.MapFallbackToFile("index.html");
+
+#endregion --------------------------------------------------------------------
 
 app.Run();
