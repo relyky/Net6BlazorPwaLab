@@ -1,6 +1,5 @@
 ﻿@page "/demo001"
 @inject WebApiService apiSvc
-@inject MediatR.IMediator mediator
 @inject BlazorComponentBus.ComponentBus busSvc
 
 <PageTitle>DEMO001</PageTitle>
@@ -39,12 +38,7 @@
 
     async Task HandleClick(MouseEventArgs e)
     {
-        var result = await mediator.Send(new MediatRHandler.QueryUserRequest { Id = 987 });
-        message = result.DisplayName;
-
         dataList = await apiSvc.PostDataAsync<List<MyFormData>>("api/MyData/QryDataList");
-
         await busSvc.Publish(new FooBusEvent { msg = $"哈 Foo 哈{DateTime.Now.Second}" });
-        await mediator.Publish(new MediatRHandler.Ping { Msg = "XY23" });
     }
 }

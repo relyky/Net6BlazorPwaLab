@@ -9,9 +9,21 @@ namespace Net6BlazorPwaLab.Server.Controllers;
 [ApiController]
 public class MyDataController : ControllerBase
 {
+  readonly MediatR.IMediator _mediator;
+
+  public MyDataController(MediatR.IMediator mediator)
+  {
+    _mediator = mediator;
+  }
+
   [HttpPost("[action]")]
   public List<MyFormData> QryDataList()
   {
+    var result = _mediator.Send(new MediatRHandler.QueryUserRequest { Id = 987 }).Result;
+    string message = result.DisplayName;
+
+    _mediator.Publish(new MediatRHandler.Ping { Msg = "XY23" });
+
     return simsMyDataTable;
   }
 

@@ -1,5 +1,5 @@
 ﻿using MediatR;
-namespace Net6BlazorPwaLab.Client.MediatRHandler;
+namespace Net6BlazorPwaLab.Server.MediatRHandler;
 
 public class Ping : INotification {
   public string Msg { get; set; } = string.Empty;
