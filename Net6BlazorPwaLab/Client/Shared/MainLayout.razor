@@ -1,38 +1,35 @@
 ﻿@inherits LayoutComponentBase
 @inject BlazorComponentBus.ComponentBus busSvc
+@inject NavigationManager navSvc
+@inject ISnackbar snackSvc
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <pre>@message</pre>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+<MudLayout>
+    <MudAppBar Elevation=1 Bottom=false>
+        <MudText Typo=Typo.h5 Class="ml-3">.NET6 Blazor PWA Lab</MudText>
+        <MudSpacer />
+        <MudIconButton Icon=@Icons.Filled.Home Color=Color.Inherit Edge=Edge.End OnClick=GoHome />
+    </MudAppBar>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
 
 @code {
-    //# resource
-    string message = "[no message]"; 
 
     protected override void OnInitialized()
     {
         //Subscribe Component to Specific Message
-        busSvc.Subscribe<FooBusEvent>(FooBusEventHandler);
+        busSvc.Subscribe<NotifyMessage>(FooBusEventHandler);
+    }
+
+    void GoHome(MouseEventArgs e)
+    {
+        navSvc.NavigateTo("/");
     }
 
     void FooBusEventHandler(BlazorComponentBus.MessageArgs args)
     {
-        var busMsg = args.GetMessage<FooBusEvent>();
-        message = busMsg.msg;
-        StateHasChanged();
+        var m = args.GetMessage<NotifyMessage>();
+        snackSvc.Add(m.Message, m.Severity);
     }
 }

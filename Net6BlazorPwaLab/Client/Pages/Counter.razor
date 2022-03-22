@@ -2,17 +2,25 @@
 
 <PageTitle>Counter</PageTitle>
 
-<h1>Counter</h1>
+<MudContainer>
+    <MudText Typo=Typo.h3>Counter</MudText>
 
-<p role="status">Current count: @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+    <MudText Typo=Typo.body1>Current count: @currentCount</MudText>
+    <MudButton Variant=Variant.Filled Color=Color.Primary OnClick=IncrementCount>累加１</MudButton>
+    <MudButton Variant=Variant.Filled Color=Color.Primary OnClick=ThrowTestingException>丟出例外</MudButton>
+</MudContainer>
 
 @code {
-    private int currentCount = 0;
+    //## State
+    int currentCount = 0;
 
-    private void IncrementCount()
+    void IncrementCount(MouseEventArgs e)
     {
         currentCount++;
+    }
+
+    void ThrowTestingException(MouseEventArgs e)
+    {
+        throw new ApplicationException("測試例外狀況。");
     }
 }

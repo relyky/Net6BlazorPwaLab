@@ -39,6 +39,6 @@
     async Task HandleClick(MouseEventArgs e)
     {
         dataList = await apiSvc.PostDataAsync<List<MyFormData>>("api/MyData/QryDataList");
-        await busSvc.Publish(new FooBusEvent { msg = $"哈 Foo 哈{DateTime.Now.Second}" });
+        await busSvc.Publish(new NotifyMessage { Message = $"哈 Foo 哈{DateTime.Now.Second}" });
     }
 }

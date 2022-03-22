@@ -1,19 +1,15 @@
 ﻿@implements IDisposable
 @inject StateContainer StateContainer
 
-<div style="border:1px solid red">
-    <h2>Nested component</h2>
-
-    <p>Nested component Property: <b>@StateContainer.Property @($"({StateContainer.ChangedCount})")</b></p>
-
-    <p>
-        <button @onclick="ChangePropertyValue">
-            Change the Property from the Nested component
-        </button>
-    </p>
-
-</div>
-
+<MudPaper Elevation=25 Class="pa-3 ma-3">
+    <MudText Typo=Typo.h4>Nested component</MudText>
+    <MudText Typo=Typo.body2>
+        Nested component Property: <b>@StateContainer.Property @($"({StateContainer.ChangedCount})")</b>
+    </MudText>
+    <MudButton Variant=Variant.Outlined Color=Color.Tertiary OnClick=ChangePropertyValue>
+        Change the Property from the Nested component
+    </MudButton>
+</MudPaper>
 
 @code {
     protected override void OnInitialized()

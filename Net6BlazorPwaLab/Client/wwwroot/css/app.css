@@ -1,4 +1,5 @@
-﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+﻿/*
+@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -34,6 +35,8 @@ a, .btn-link {
     color: red;
 }
 
+*/
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
@@ -43,7 +46,7 @@ a, .btn-link {
     padding: 0.6rem 1.25rem 0.7rem 1.25rem;
     position: fixed;
     width: 100%;
-    z-index: 1000;
+    z-index: 9000;
 }
 
     #blazor-error-ui .dismiss {

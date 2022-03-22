@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor.Services;
 using Net6BlazorPwaLab.Client;
 using Net6BlazorPwaLab.Client.Services;
 
@@ -10,6 +11,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 #region ## Add services to the container. -------------------------------------
 
 builder.Services.AddScoped<BlazorComponentBus.ComponentBus>();
+builder.Services.AddMudServices();
 
 builder.Services.AddScoped(sp => new HttpClient
 {

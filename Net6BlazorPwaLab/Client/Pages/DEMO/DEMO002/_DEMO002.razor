@@ -4,27 +4,23 @@
 
 <PageTitle>DEMO002</PageTitle>
 
-<h1>State Container Example component</h1>
 
-<p>State Container component Property: <b>@StateContainer.Property @($"({StateContainer.ChangedCount})")</b></p>
+<MudContainer>
+    <MudText Typo=Typo.h3>State Container Example component</MudText>
+    <MudText Typo=Typo.body1>State Container component Property: <b>@StateContainer.Property @($"({StateContainer.ChangedCount})")</b></MudText>
 
-<p>
-    <button @onclick="ChangePropertyValue">
+    <MudButton Variant=Variant.Outlined Color=Color.Primary OnClick=ChangePropertyValue>
         Change the Property from the State Container Example component
-    </button>
-</p>
+    </MudButton>
 
-<p>
-    <label>
-        <input type="checkbox" @bind-value=@f_showNest />
-        Show Nest Componnet
-    </label>
-</p>
+    <MudSwitch @bind-Checked=@f_showNest Color=Color.Secondary Label="Show Nest Componnet" />        
+    @if (f_showNest)
+    {
+        <Nested />
+    }
 
-@if(f_showNest)
-{
-    <Nested />    
-}
+</MudContainer>
+
 
 @code {
     //## State
