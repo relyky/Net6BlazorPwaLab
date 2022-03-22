@@ -4,17 +4,36 @@
 @inject ISnackbar snackSvc
 
 <MudLayout>
-    <MudAppBar Elevation=1 Bottom=false>
-        <MudText Typo=Typo.h5 Class="ml-3">.NET6 Blazor PWA Lab</MudText>
+    <MudAppBar Elevation=1 Bottom=@f_bottom>
+        <MudText Typo=Typo.h5 Class="text-ellipsis ml-3">
+            .NET6 Blazor PWA Lab
+        </MudText>
         <MudSpacer />
+        <MudSwitch @bind-Checked=@f_bottom/>
         <MudIconButton Icon=@Icons.Filled.Home Color=Color.Inherit Edge=Edge.End OnClick=GoHome />
+        <MudIconButton Icon=@Icons.Filled.MoreVert Color="Color.Inherit" Edge=Edge.End OnClick=ToggleDrawer />
     </MudAppBar>
-    <MudMainContent>
+
+    <MudDrawer @bind-Open=@f_open Anchor=@(f_bottom ? Anchor.Bottom : Anchor.Right) Elevation=1 Color=Color.Secondary Variant=DrawerVariant.Temporary>
+        <MudDrawerHeader>
+            <MudText Typo=Typo.h6>.NET6 Blazor PWA Lab</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Match=NavLinkMatch.All>Store</MudNavLink>
+            <MudNavLink Match=NavLinkMatch.All>Library</MudNavLink>
+            <MudNavLink Match=NavLinkMatch.All>Community</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+
+    <MudMainContent Class=@(f_bottom ? "pt-0" : "")>
         @Body
     </MudMainContent>
 </MudLayout>
 
 @code {
+    //## State
+    bool f_open = false;
+    bool f_bottom = false;
 
     protected override void OnInitialized()
     {
@@ -25,6 +44,11 @@
     void GoHome(MouseEventArgs e)
     {
         navSvc.NavigateTo("/");
+    }
+
+    void ToggleDrawer()
+    {
+        f_open = !f_open;
     }
 
     void FooBusEventHandler(BlazorComponentBus.MessageArgs args)
