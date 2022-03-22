@@ -1,0 +1,48 @@
+﻿@page "/demo002"
+@implements IDisposable
+@inject StateContainer StateContainer
+
+<PageTitle>DEMO002</PageTitle>
+
+<h1>State Container Example component</h1>
+
+<p>State Container component Property: <b>@StateContainer.Property @($"({StateContainer.ChangedCount})")</b></p>
+
+<p>
+    <button @onclick="ChangePropertyValue">
+        Change the Property from the State Container Example component
+    </button>
+</p>
+
+<p>
+    <label>
+        <input type="checkbox" @bind-value=@f_showNest />
+        Show Nest Componnet
+    </label>
+</p>
+
+@if(f_showNest)
+{
+    <Nested />    
+}
+
+@code {
+    //## State
+    bool f_showNest = true;
+
+    protected override void OnInitialized()
+    {
+        StateContainer.OnChange += StateHasChanged;
+    }
+
+    private void ChangePropertyValue()
+    {
+        StateContainer.Property = "New value set in the State " +
+            $"Container Example component: {DateTime.Now}";
+    }
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+}
