@@ -1,11 +1,13 @@
 ﻿@page "/demo001"
 @inject WebApiService apiSvc
+@inject MediatR.IMediator mediator
+@inject BlazorComponentBus.ComponentBus busSvc
 
 <PageTitle>DEMO001</PageTitle>
 
 <h3>_DEMO001</h3>
 
-<button class="btn btn-primary" @onclick=HandleClick>刷新</button>
+<button class="btn btn-primary" @onclick=HandleClick>載入資料</button>
 
 <table class="table">
     <thead>
@@ -35,14 +37,14 @@
     private List<MyFormData>? dataList = new();
     string message = String.Empty;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        //dataList = await Http.GetFromJsonAsync<List<MyFormData>>("WeatherForecast");
-    }
-
     async Task HandleClick(MouseEventArgs e)
     {
+        var result = await mediator.Send(new MediatRHandler.QueryUserRequest { Id = 987 });
+        message = result.DisplayName;
+
         dataList = await apiSvc.PostDataAsync<List<MyFormData>>("api/MyData/QryDataList");
+
+        await busSvc.Publish(new FooBusEvent { msg = $"哈 Foo 哈{DateTime.Now.Second}" });
+        await mediator.Publish(new MediatRHandler.Ping { Msg = "XY23" });
     }
 }

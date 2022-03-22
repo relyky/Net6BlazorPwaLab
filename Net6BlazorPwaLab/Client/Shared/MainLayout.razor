@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject BlazorComponentBus.ComponentBus busSvc
 
 <div class="page">
     <div class="sidebar">
@@ -10,8 +11,28 @@
             <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
         </div>
 
+        <pre>@message</pre>
+
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
+
+@code {
+    //# resource
+    string message = "[no message]"; 
+
+    protected override void OnInitialized()
+    {
+        //Subscribe Component to Specific Message
+        busSvc.Subscribe<FooBusEvent>(FooBusEventHandler);
+    }
+
+    void FooBusEventHandler(BlazorComponentBus.MessageArgs args)
+    {
+        var busMsg = args.GetMessage<FooBusEvent>();
+        message = busMsg.msg;
+        StateHasChanged();
+    }
+}
