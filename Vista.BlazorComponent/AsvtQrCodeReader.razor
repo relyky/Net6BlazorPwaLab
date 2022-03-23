@@ -1,0 +1,72 @@
+﻿@inject IJSRuntime jsr
+@implements IDisposable
+
+<div class="qrcode-containter">
+  <div id=@elementId style="visibility:hidden"></div>
+</div>
+
+@* for DEBUG *@
+<pre>@elementId</pre>
+
+@code {
+  /// <summary>
+  /// 成功掃描 QR Code 就立刻停止
+  /// </summary>
+  [Parameter] public bool NotReadStop { get; set; } = false;
+
+  /// <summary>
+  /// 回應掃描結果
+  /// </summary>
+  [Parameter] public EventCallback<QrCodeInterop.ScanResponseEvnetArgs> OnResponse { get; set;}
+
+  //# resource
+  string elementId { get; init; } = $"qrcodeReader-{Guid.NewGuid():N}";
+  QrCodeInterop qrcSvc;
+
+  protected override void OnInitialized()
+  {
+    base.OnInitialized();
+    qrcSvc = new QrCodeInterop(jsr);
+    qrcSvc.OnScanResponseEvnet += HandleScanResponse;
+  }
+
+  public void Dispose()
+  {
+    qrcSvc?.DisposeAsync();
+  }
+
+  /// <summary>
+  /// 回應掃描結果。可應用於連續掃描。
+  /// </summary>
+  void HandleScanResponse(object sender, QrCodeInterop.ScanResponseEvnetArgs args)
+  {
+    OnResponse.InvokeAsync(args);
+  }
+
+  //## public Method --------------------------
+
+  /// <summary>
+  /// 掃描一次 QR Code
+  /// </summary>
+  public async Task<string> ScanOnceAsync()
+  {
+    string qrCode = await qrcSvc.ScanQrCodeOnce(elementId);
+    return qrCode;
+  }
+
+  /// <summary>
+  /// 開始掃描 QR Code。可應用於連續掃描。
+  /// </summary>
+  public async Task StartScanAsync()
+  {
+    await qrcSvc.StartScanAsync(elementId, !NotReadStop);
+  }
+
+  /// <summary>
+  /// 停止掃描 QR Code。
+  /// </summary>
+  public async Task StopScanAsync()
+  {
+    await qrcSvc.StopScanAsync();
+  }
+}

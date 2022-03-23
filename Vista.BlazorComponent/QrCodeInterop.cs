@@ -55,7 +55,7 @@ public class QrCodeInterop : IAsyncDisposable
     return await module.InvokeAsync<string>("scanQrCodeOnce", elementId);
   }
 
-  public async Task ScanQrCodeAsync(string elementId, bool f_readStop)
+  public async Task StartScanAsync(string elementId, bool f_readStop)
   {
     var module = await moduleTask.Value;
     await module.InvokeVoidAsync("scanQrCode", dotNetObject.Value, elementId, f_readStop);
