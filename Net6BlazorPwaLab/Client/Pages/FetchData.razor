@@ -1,99 +1,106 @@
 ﻿@page "/fetchdata"
-@inject HttpClient Http
+@inject WebApiService apiSvc
 @inject BlazorComponentBus.ComponentBus busSvc
 
 <PageTitle>Weather forecast</PageTitle>
 
 <style>
-    .selected {
-        background-color: var(--mud-palette-secondary) !important;
-    }
+  .selected {
+      background-color: var(--mud-palette-secondary) !important;
+  }
 
-        .selected > td {
-            color: var(--mud-palette-secondary-text) !important;
-        }
+      .selected > td {
+          color: var(--mud-palette-secondary-text) !important;
+      }
 
-            .selected > td .mud-input {
-                color: var(--mud-palette-secondary-text) !important;
-            }
+          .selected > td .mud-input {
+              color: var(--mud-palette-secondary-text) !important;
+          }
 </style>
 
 <MudContainer>
-    <MudText Typo=Typo.h3>Weather forecast</MudText>
-    <MudText Typo=Typo.body1>This component demonstrates fetching data from the server.</MudText>
+  <MudText Typo=Typo.h3>Weather forecast</MudText>
+  <MudText Typo=Typo.body1>This component demonstrates fetching data from the server.</MudText>
 
-    <MudDivider DividerType=DividerType.Middle />
+  <MudDivider DividerType=DividerType.Middle />
 
-    <MudToolBar>
-        <MudButton Variant=Variant.Filled Color=Color.Primary OnClick=HandleClick>刷新</MudButton>
-    </MudToolBar>
+  <MudToolBar>
+    <MudButton Variant=Variant.Filled Color=Color.Primary OnClick=HandleClick>刷新</MudButton>
+  </MudToolBar>
 
-    @if (forecasts == null)
-    {
-        <div class="mud-typography-align-center">
-            <MudProgressCircular Color=Color.Info Size=Size.Large Indeterminate />
-        </div>
-    }
-    else
-    {
-        <MudTable T=WeatherForecast Items=@forecasts Hover Breakpoint=Breakpoint.None Class="my-2"
-              HeaderClass="mud-theme-info"
-              @ref=@mudTable Loading=@f_loading LoadingProgressColor=Color.Info
-              OnRowClick=RowClickEvent
-              RowClassFunc=SelectedRowClassFunc>
-            <HeaderContent>
-                <MudTh>Date</MudTh>
-                <MudTh>Temp.(C)</MudTh>
-                <MudTh>Temp.(F)</MudTh>
-                <MudTh>Summary</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Date">@context.Date.ToShortDateString()</MudTd>
-                <MudTd DataLabel="Temp.(C)">@context.TemperatureC</MudTd>
-                <MudTd DataLabel="Temp.(F)">@context.TemperatureF</MudTd>
-                <MudTd DataLabel="Summary">@context.Summary</MudTd>
-            </RowTemplate>
-        </MudTable>
-    }
+  @if (forecasts == null)
+  {
+    <div class="mud-typography-align-center">
+      <MudProgressCircular Color=Color.Info Size=Size.Large Indeterminate />
+    </div>
+  }
+  else
+  {
+    <MudTable T=WeatherForecast Items=@forecasts Hover Breakpoint=Breakpoint.None Class="my-2"
+            HeaderClass="mud-theme-info"
+            @ref=@mudTable Loading=@f_loading LoadingProgressColor=Color.Info
+            OnRowClick=RowClickEvent
+            RowClassFunc=SelectedRowClassFunc>
+      <HeaderContent>
+        <MudTh>Date</MudTh>
+        <MudTh>Temp.(C)</MudTh>
+        <MudTh>Temp.(F)</MudTh>
+        <MudTh>Summary</MudTh>
+      </HeaderContent>
+      <RowTemplate>
+        <MudTd DataLabel="Date">@context.Date.ToShortDateString()</MudTd>
+        <MudTd DataLabel="Temp.(C)">@context.TemperatureC</MudTd>
+        <MudTd DataLabel="Temp.(F)">@context.TemperatureF</MudTd>
+        <MudTd DataLabel="Summary">@context.Summary</MudTd>
+      </RowTemplate>
+    </MudTable>
+  }
 </MudContainer>
 
 @code {
-    //## Resource
-    MudTable<WeatherForecast> mudTable;
+  //## Resource
+  MudTable<WeatherForecast> mudTable;
 
-    //## State
-    List<WeatherForecast>? forecasts = null;
-    WeatherForecast? selectedItem = null;
-    bool f_loading = false;
+  //## State
+  List<WeatherForecast>? forecasts = null;
+  WeatherForecast? selectedItem = null;
+  bool f_loading = false;
 
-    protected override async Task OnInitializedAsync()
+  protected override async Task OnInitializedAsync()
+  {
+    await Task.Delay(500); // 載入感
+    forecasts = await apiSvc.PostDataAsync<WeatherForecastQryArgs, List<WeatherForecast>>(
+      "WeatherForecast/QryDataList",
+      new() { Count = 100 });
+  }
+
+  async Task HandleClick(MouseEventArgs e)
+  {
+    try
     {
-        await Task.Delay(500); // 載入感
-        forecasts = await Http.GetFromJsonAsync<List<WeatherForecast>>("WeatherForecast");
-    }
+      f_loading = true;
 
-    async Task HandleClick(MouseEventArgs e)
-    {
-        try
-        {
-            f_loading = true;
-            await Task.Delay(500); // 載入感
-            forecasts = await Http.GetFromJsonAsync<List<WeatherForecast>>("WeatherForecast");
-            await busSvc.Publish(new NotifyMessage { Message = $"取得天氣資料 at {DateTime.Now:mm:ss}" });
-        }
-        finally
-        {
-            f_loading = false;
-        }
-    }
+      await Task.Delay(500); // 載入感
 
-    void RowClickEvent(TableRowClickEventArgs<WeatherForecast> e)
-    {
-        selectedItem = e.Item;
-    }
+      forecasts = await apiSvc.PostDataAsync<WeatherForecastQryArgs, List<WeatherForecast>>(
+        "WeatherForecast/QryDataList",
+        new() { Count = 100 });
 
-    string SelectedRowClassFunc(WeatherForecast item, int rowNumber)
-    {
-        return item.Equals(selectedItem) ? "selected" : string.Empty;
+      await busSvc.Publish(new NotifyMessage { Message = $"取得天氣資料 at {DateTime.Now:mm:ss}" });
     }
+    finally
+    {
+      f_loading = false;
+    }
+  }
+
+  void RowClickEvent(TableRowClickEventArgs<WeatherForecast> e)
+  {
+    selectedItem = e.Item;
+  }
+
+  string SelectedRowClassFunc(WeatherForecast item, int rowNumber)
+  {
+    return item.Equals(selectedItem) ? "selected" : string.Empty;
+  }
 }
