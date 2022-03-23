@@ -1,44 +1,19 @@
 ﻿@page "/demo001"
 @inject WebApiService apiSvc
 @inject BlazorComponentBus.ComponentBus busSvc
+@using Vista.BlazorComponent
 
 <PageTitle>DEMO001</PageTitle>
 
-<h3>_DEMO001</h3>
+<MudContainer>
+    <MudText Typo=Typo.h3>_DEMO001</MudText>
+    <MudText Typo=Typo.body1>試用 BlazorComponnet</MudText>
 
-<button class="btn btn-primary" @onclick=HandleClick>載入資料</button>
+    <Component1 />
+</MudContainer>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Gender</th>
-            <th>Nid</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in dataList)
-        {
-            <tr>
-                <td>@item.Name</td>
-                <td>@item.Gender</td>
-                <td>@item.Nid</td>
-            </tr>
-        }
-    </tbody>
-</table>
 
-<pre>
-    @message
-</pre>
 
 @code {
-    private List<MyFormData>? dataList = new();
-    string message = String.Empty;
 
-    async Task HandleClick(MouseEventArgs e)
-    {
-        dataList = await apiSvc.PostDataAsync<List<MyFormData>>("api/MyData/QryDataList");
-        await busSvc.Publish(new NotifyMessage { Message = $"哈 Foo 哈{DateTime.Now.Second}" });
-    }
 }

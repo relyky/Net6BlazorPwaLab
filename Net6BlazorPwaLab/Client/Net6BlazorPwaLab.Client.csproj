@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Vista.BlazorComponent\Vista.BlazorComponent.csproj" />
     <ProjectReference Include="..\Shared\Net6BlazorPwaLab.Shared.csproj" />
   </ItemGroup>
 
