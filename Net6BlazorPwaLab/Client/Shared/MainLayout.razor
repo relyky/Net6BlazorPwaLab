@@ -4,56 +4,53 @@
 @inject ISnackbar snackSvc
 
 <MudLayout>
-    <MudAppBar Elevation=1 Bottom=@f_bottom>
-        <MudText Typo=Typo.h5 Class="text-ellipsis ml-3">
-            .NET6 Blazor PWA Lab
-        </MudText>
-        <MudSpacer />
-        <MudSwitch @bind-Checked=@f_bottom/>
-        <MudIconButton Icon=@Icons.Filled.Home Color=Color.Inherit Edge=Edge.End OnClick=GoHome />
-        <MudIconButton Icon=@Icons.Filled.MoreVert Color="Color.Inherit" Edge=Edge.End OnClick=ToggleDrawer />
-    </MudAppBar>
+  <MudDrawer @bind-Open=@f_open Anchor=@(f_bottom ? Anchor.Bottom : Anchor.Right) Elevation=1 Color=Color.Secondary Variant=DrawerVariant.Temporary>
+    <MudDrawerHeader>
+      <MudText Typo=Typo.h6>更多功能</MudText>
+    </MudDrawerHeader>
+    <NavMenu />
+  </MudDrawer>
 
-    <MudDrawer @bind-Open=@f_open Anchor=@(f_bottom ? Anchor.Bottom : Anchor.Right) Elevation=1 Color=Color.Secondary Variant=DrawerVariant.Temporary>
-        <MudDrawerHeader>
-            <MudText Typo=Typo.h6>.NET6 Blazor PWA Lab</MudText>
-        </MudDrawerHeader>
-        <MudNavMenu>
-            <MudNavLink Match=NavLinkMatch.All>Store</MudNavLink>
-            <MudNavLink Match=NavLinkMatch.All>Library</MudNavLink>
-            <MudNavLink Match=NavLinkMatch.All>Community</MudNavLink>
-        </MudNavMenu>
-    </MudDrawer>
+  <MudMainContent Class=@(f_bottom ? "page-tail" : "")>
+    @Body
+  </MudMainContent>
 
-    <MudMainContent Class=@(f_bottom ? "pt-0" : "")>
-        @Body
-    </MudMainContent>
+  <MudAppBar Elevation=1 Bottom=@f_bottom>
+    <MudText Typo=Typo.h5 Class="text-ellipsis ml-3">
+      .NET6 Blazor PWA Lab
+    </MudText>
+    <MudSpacer />
+    <MudSwitch @bind-Checked=@f_bottom />
+    <MudIconButton Icon=@Icons.Filled.Home Color=Color.Inherit Edge=Edge.End OnClick=GoHome />
+    <MudIconButton Icon=@Icons.Filled.MoreVert Color="Color.Inherit" Edge=Edge.End OnClick=ToggleDrawer />
+  </MudAppBar>
+
 </MudLayout>
 
 @code {
-    //## State
-    bool f_open = false;
-    bool f_bottom = false;
+  //## State
+  bool f_open = false;
+  bool f_bottom = true;
 
-    protected override void OnInitialized()
-    {
-        //Subscribe Component to Specific Message
-        busSvc.Subscribe<NotifyMessage>(FooBusEventHandler);
-    }
+  protected override void OnInitialized()
+  {
+    //Subscribe Component to Specific Message
+    busSvc.Subscribe<NotifyMessage>(FooBusEventHandler);
+  }
 
-    void GoHome(MouseEventArgs e)
-    {
-        navSvc.NavigateTo("/");
-    }
+  void GoHome(MouseEventArgs e)
+  {
+    navSvc.NavigateTo("/");
+  }
 
-    void ToggleDrawer()
-    {
-        f_open = !f_open;
-    }
+  void ToggleDrawer()
+  {
+    f_open = !f_open;
+  }
 
-    void FooBusEventHandler(BlazorComponentBus.MessageArgs args)
-    {
-        var m = args.GetMessage<NotifyMessage>();
-        snackSvc.Add(m.Message, m.Severity);
-    }
+  void FooBusEventHandler(BlazorComponentBus.MessageArgs args)
+  {
+    var m = args.GetMessage<NotifyMessage>();
+    snackSvc.Add(m.Message, m.Severity);
+  }
 }
