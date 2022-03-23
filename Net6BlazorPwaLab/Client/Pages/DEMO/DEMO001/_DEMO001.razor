@@ -1,19 +1,83 @@
 ﻿@page "/demo001"
-@inject WebApiService apiSvc
-@inject BlazorComponentBus.ComponentBus busSvc
-@using Vista.BlazorComponent
+@inject QrCodeInterop qrcSvc
 
 <PageTitle>DEMO001</PageTitle>
 
 <MudContainer>
-    <MudText Typo=Typo.h3>_DEMO001</MudText>
-    <MudText Typo=Typo.body1>試用 BlazorComponnet</MudText>
+    <MudText Typo=Typo.h3>_DEMO001:Html5QrCode.v4</MudText>
+    <MudText Typo=Typo.body1>測試 Html5試用 BlazorComponnet</MudText>
 
-    <Component1 />
+    <MudButton Variant=Variant.Outlined Color=Color.Warning OnClick=HandleScanQrCode >可連續掃描QR Code</MudButton>
+    <MudButton Variant=Variant.Outlined Color=Color.Warning OnClick=HandleStopScan >停止掃描</MudButton>
+    <MudCheckBox @bind-Checked=@f_readStop Color=Color.Warning Label="掃描成功後立刻停止掃描" />
+
+    <br />
+    <MudButton Variant=Variant.Filled Color=Color.Primary OnClick=HandleScanQrCodeOnce >掃描QR Code</MudButton>
+
+    <div style="width:600px; max-width:80vw; border:solid 1px darkgrey; background-color:lightgrey; padding:4px; margin: 8px auto; border-radius: 4px;">
+        <div id="qrcodeReader" style="visibility:hidden"></div>
+    </div>
+
+    <p>qrCode(@scanCount):@qrCode</p>
+    <p>warnMsg(@warnCount):@warnMsg</p>
+    <p>errorMsg(@errorCount):@errorMsg</p>
 </MudContainer>
 
-
-
 @code {
+    //## State
+    string qrCode = string.Empty;
+    int scanCount = 0;
+    string warnMsg = string.Empty;
+    int warnCount = 0;
+    string errorMsg = string.Empty;
+    int errorCount = 0;
+    bool f_readStop = true;
 
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        qrcSvc.OnScanResponseEvnet += HandleScanResponse;
+    }
+
+    async Task HandleScanQrCodeOnce()
+    {
+        scanCount = warnCount = errorCount = 0;
+        qrCode = await qrcSvc.ScanQrCodeOnce("qrcodeReader");
+    }
+
+    async void HandleScanQrCode()
+    {
+        scanCount = warnCount = errorCount = 0;
+        await qrcSvc.ScanQrCodeAsync("qrcodeReader", f_readStop);
+    }
+
+    async Task HandleStopScan()
+    {
+        await qrcSvc.StopScanAsync();
+    }
+
+    /// <summary>
+    /// 用於連續掃描 QR Code 時取得掃描結果。
+    /// </summary>
+    void HandleScanResponse(object sender, QrCodeInterop.ScanResponseEvnetArgs args)
+    {
+        switch (args.type)
+        {
+            case "SUCCESS":
+                qrCode = args.message;
+                scanCount++;
+                break;
+            case "WARN":
+            case "STOP":
+                warnMsg = args.message;
+                warnCount++;
+                break;
+            default:
+                errorMsg = args.message;
+                errorCount++;
+                break;
+        }
+
+        StateHasChanged();
+    }
 }

@@ -17,7 +17,7 @@ public class QrCodeInterop : IAsyncDisposable
   readonly Lazy<Task<IJSObjectReference>> moduleTask;
   readonly Lazy<DotNetObjectReference<QrCodeInterop>> dotNetObject;
 
-  public event EventHandler<ScanResponseEvnetArgs>? OnScanResponseEvnet;
+  public event EventHandler<ScanResponseEvnetArgs> OnScanResponseEvnet;
   public class ScanResponseEvnetArgs : EventArgs
   {
     public string type = string.Empty;
@@ -28,7 +28,7 @@ public class QrCodeInterop : IAsyncDisposable
   public QrCodeInterop(IJSRuntime jsRuntime)
   {
     moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
-       "import", "./_content/MyBlazor.RazorComponent/tools/qrcodeTools.js").AsTask());
+       "import", "./_content/Vista.BlazorComponent/tools/qrcodeTools.js").AsTask());
 
     dotNetObject = new(DotNetObjectReference.Create(this));
   }

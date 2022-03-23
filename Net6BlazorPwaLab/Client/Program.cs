@@ -21,7 +21,7 @@ builder.Services.AddScoped(sp => new HttpClient
 
 builder.Services.AddScoped<WebApiService>();
 builder.Services.AddScoped<StateContainer>();
-//builder.Services.AddTransient<StateContainer>();
+builder.Services.AddScoped<Vista.BlazorComponent.QrCodeInterop>();
 
 #endregion --------------------------------------------------------------------
 
