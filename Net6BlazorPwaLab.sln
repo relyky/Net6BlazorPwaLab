@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net6BlazorPwaLab.Client", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net6BlazorPwaLab.Shared", "Net6BlazorPwaLab\Shared\Net6BlazorPwaLab.Shared.csproj", "{5A9ECFAF-8EFC-48FF-8C02-E26714ABFB18}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vista.BlazorComponent", "Vista.BlazorComponent\Vista.BlazorComponent.csproj", "{9FC6C9F9-AF24-4E62-9FF1-14FAC54EB1F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vista.BlazorComponent", "Vista.BlazorComponent\Vista.BlazorComponent.csproj", "{9FC6C9F9-AF24-4E62-9FF1-14FAC54EB1F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

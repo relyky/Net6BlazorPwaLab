@@ -1,0 +1,97 @@
+﻿@page "/camera"
+@inject CameraInterop jsrCamera;
+
+<PageTitle>展示照像</PageTitle>
+
+<MudContainer>
+  <MudText Typo=Typo.h3>展示照像</MudText>
+  <MudText Typo=Typo.body1>展示照像功能。需支援HTML5以上瀏灠器。</MudText>
+
+  <MudButton Variant=Variant.Outlined Color=Color.Warning OnClick=HandleStartCamera>啟動攝影機</MudButton>
+  <MudButton Variant=Variant.Filled Color=Color.Primary OnClick=HandleTakePhoto>照像</MudButton>
+  <MudButton Variant=Variant.Outlined Color=Color.Warning OnClick=HandleStopCamera>停止</MudButton>
+
+  <MudAlert Severity=Severity.Info>
+    @message
+  </MudAlert>
+
+  @* needed to by the camera stream *@
+  <div class="@(jsrCamera.IsOpen ? "d-block" : "d-none")" style="text-align:center; width:600px; max-width:90vw; margin:auto;">
+    <video @ref=@videoElement style="width:100%; background-color:grey;" autoplay muted webkit-playsinline playsinline></video>
+    <button class="btn btn-info" style="position:relative; bottom:50px; border-radius:50%;" @onclick=HandleTakePhoto>
+      <span class="oi oi-camera-slr"></span>
+    </button>
+  </div>
+
+  @* needed if you want to display the image when you take a photo 
+  <img alt="photo picture" src=@photoDataUri class="img-fluid img-thumbnail mx-auto d-block">
+  *@
+
+  @* needed if you want to display the image when you take a photo *@
+  @if (!String.IsNullOrWhiteSpace(photoDataUri))
+  {
+    <MudText Typo=Typo.h5>照片</MudText>
+    <MudImage Fluid Src=@photoDataUri Alt="photo picture" Class="rounded-lg mb-3"/>
+  }
+
+
+
+</MudContainer>
+
+@code {
+
+  ///## Resource
+  ElementReference videoElement;
+
+  ///## State
+  string photoDataUri = string.Empty;
+  string message = string.Empty;
+
+  protected override void OnInitialized()
+  {
+    base.OnInitialized();
+    jsrCamera.OnCameraResponseEvnet += HandleCameraResponse;
+  }
+
+  async Task HandleStartCamera()
+  {
+    await jsrCamera.StartCameraAsync(videoElement);
+  }
+
+  async Task HandleStopCamera()
+  {
+    await jsrCamera.StopCameraAsync();
+  }
+
+  async Task HandleTakePhoto()
+  {
+    await jsrCamera.TakePhotoAsync();
+  }
+
+  void HandleCameraResponse(object sender, CameraInterop.CameraResponseEvnetArgs args)
+  {
+    switch (args.type)
+    {
+      case "SUCCESS":
+        message = args.message;
+        StateHasChanged();
+        break;
+      case "STOP":
+        message = args.message;
+        StateHasChanged();
+        break;
+      case "PHOTO":
+        photoDataUri = args.message;
+        Task.Run(async () =>
+        {
+          await jsrCamera.StopCameraAsync();
+          StateHasChanged();
+        });
+        break;
+      default:
+        message = args.message;
+        StateHasChanged();
+        break;
+    }
+  }
+}
