@@ -5,8 +5,9 @@
   <div id=@elementId style="visibility:hidden"></div>
 </div>
 
-@* for DEBUG *@
-<pre>@elementId</pre>
+@* for DEBUG
+<pre>@elementId</pre> 
+*@
 
 @code {
   /// <summary>
@@ -17,7 +18,7 @@
   /// <summary>
   /// 回應掃描結果
   /// </summary>
-  [Parameter] public EventCallback<QrCodeInterop.ScanResponseEvnetArgs> OnResponse { get; set;}
+  [Parameter, EditorRequired] public EventCallback<QrCodeInterop.ScanResponseEvnetArgs> OnResponse { get; set;}
 
   //# resource
   string elementId { get; init; } = $"qrcodeReader-{Guid.NewGuid():N}";

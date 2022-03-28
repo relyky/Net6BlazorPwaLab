@@ -1,0 +1,76 @@
+﻿@inject IJSRuntime jsr
+@implements IDisposable
+
+@* 照像元件  *@
+
+@* needed to by the camera stream *@
+<div class="camera-containter @(jsrCamera != null && jsrCamera.IsOpen ? "d-block" : "d-none")" style=@Style >
+  <video @ref=@videoElement autoplay muted webkit-playsinline playsinline></video>
+  <button @onclick=TakePhotoAsync>
+    @if (TakeIcon != null)
+    {
+      @TakeIcon
+    }
+    else
+    {
+      <span>照像</span>
+    }
+  </button>
+</div>
+
+@* for DEBUG 
+<pre>@photoDataUri</pre>
+*@
+
+@code {
+  [Parameter] public string? Style { get; set; }
+  [Parameter] public RenderFragment? TakeIcon { get; set; }
+
+  /// <summary>
+  /// 回應掃描結果
+  /// </summary>
+  [Parameter, EditorRequired] public EventCallback<CameraInterop.CameraResponseEvnetArgs> OnResponse { get; set; }
+
+  ///## State
+  //string photoDataUri = string.Empty;
+
+  ///## Resource
+  ElementReference videoElement;
+  CameraInterop jsrCamera;
+
+  protected override void OnInitialized()
+  {
+    base.OnInitialized();
+    jsrCamera = new CameraInterop(jsr);
+    jsrCamera.OnCameraResponseEvnet += HandleCameraResponse;
+  }
+
+  public void Dispose()
+  {
+    jsrCamera?.DisposeAsync();
+  }
+
+  /// <summary>
+  /// 回應處理結果
+  /// </summary>
+  void HandleCameraResponse(object sender, CameraInterop.CameraResponseEvnetArgs args)
+  {
+    OnResponse.InvokeAsync(args);
+  }
+
+  //## public Method --------------------------
+  public async Task StartCameraAsync()
+  {
+    await jsrCamera.StartCameraAsync(videoElement);
+  }
+
+  public async Task StopCameraAsync()
+  {
+    await jsrCamera.StopCameraAsync();
+  }
+
+  public async Task TakePhotoAsync()
+  {
+    await jsrCamera.TakePhotoAsync();
+  }
+}

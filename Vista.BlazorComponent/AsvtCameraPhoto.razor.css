@@ -1,0 +1,21 @@
+﻿.camera-containter {
+  text-align:center; 
+  width:600px; 
+  max-width:90vw; 
+  margin:auto;
+}
+
+  .camera-containter > video {
+    width: 100%;
+    background-color: grey;
+  }
+
+  .camera-containter > button {
+    position: relative;
+    bottom: 50px;
+    padding: 4px;
+    border-style: solid;
+    border-color: inherit;
+    border-width: medium;
+    border-radius: 50%;
+  }

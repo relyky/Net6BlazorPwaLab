@@ -1,5 +1,4 @@
 ﻿@page "/camera"
-@inject CameraInterop jsrCamera;
 
 <PageTitle>展示照像</PageTitle>
 
@@ -15,60 +14,56 @@
     @message
   </MudAlert>
 
-  @* needed to by the camera stream *@
-  <div class="@(jsrCamera.IsOpen ? "d-block" : "d-none")" style="text-align:center; width:600px; max-width:90vw; margin:auto;">
-    <video @ref=@videoElement style="width:100%; background-color:grey;" autoplay muted webkit-playsinline playsinline></video>
-    <button class="btn btn-info" style="position:relative; bottom:50px; border-radius:50%;" @onclick=HandleTakePhoto>
-      <span class="oi oi-camera-slr"></span>
-    </button>
-  </div>
+  <AsvtCameraPhoto @ref=@cameraRef OnResponse=HandleCameraResponse Style="color:var(--mud-palette-info)">
+    <TakeIcon>
+      <MudIcon Icon=@Icons.Filled.PhotoCamera />
+    </TakeIcon>
+  </AsvtCameraPhoto>
 
-  @* needed if you want to display the image when you take a photo 
-  <img alt="photo picture" src=@photoDataUri class="img-fluid img-thumbnail mx-auto d-block">
+  @*  <AsvtCameraPhoto @ref=@cameraRef OnResponse=HandleCameraResponse>
+    <TakeIcon>
+    <MudIcon Icon=@Icons.Filled.PhotoCamera Color=Color.Info />
+    </TakeIcon>
+    </AsvtCameraPhoto>
+  *@
+  @* needed if you want to display the image when you take a photo
+    <img alt="photo picture" src=@photoDataUri class="img-fluid img-thumbnail mx-auto d-block">
   *@
 
   @* needed if you want to display the image when you take a photo *@
   @if (!String.IsNullOrWhiteSpace(photoDataUri))
   {
-    <MudText Typo=Typo.h5>照片</MudText>
-    <MudImage Fluid Src=@photoDataUri Alt="photo picture" Class="rounded-lg mb-3"/>
+    <MudText Typo=Typo.h5>取得照片</MudText>
+    <MudImage Fluid Src=@photoDataUri Alt="photo picture" Class="rounded-lg mb-3" />
   }
-
-
 
 </MudContainer>
 
 @code {
 
   ///## Resource
-  ElementReference videoElement;
+  AsvtCameraPhoto cameraRef;
 
   ///## State
   string photoDataUri = string.Empty;
   string message = string.Empty;
 
-  protected override void OnInitialized()
-  {
-    base.OnInitialized();
-    jsrCamera.OnCameraResponseEvnet += HandleCameraResponse;
-  }
-
   async Task HandleStartCamera()
   {
-    await jsrCamera.StartCameraAsync(videoElement);
+    await cameraRef.StartCameraAsync();
   }
 
   async Task HandleStopCamera()
   {
-    await jsrCamera.StopCameraAsync();
+    await cameraRef.StopCameraAsync();
   }
 
   async Task HandleTakePhoto()
   {
-    await jsrCamera.TakePhotoAsync();
+    await cameraRef.TakePhotoAsync();
   }
 
-  void HandleCameraResponse(object sender, CameraInterop.CameraResponseEvnetArgs args)
+  void HandleCameraResponse(CameraInterop.CameraResponseEvnetArgs args)
   {
     switch (args.type)
     {
@@ -84,7 +79,7 @@
         photoDataUri = args.message;
         Task.Run(async () =>
         {
-          await jsrCamera.StopCameraAsync();
+          await cameraRef.StopCameraAsync();
           StateHasChanged();
         });
         break;
