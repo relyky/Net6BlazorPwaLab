@@ -10,9 +10,6 @@
   <MudButton Variant=Variant.Outlined Color=Color.Warning OnClick=HandleStopScan>停止掃描</MudButton>
   <MudCheckBox @bind-Checked=@f_readStop Color=Color.Warning Label="掃描成功後立刻停止掃描" />
 
-  <br/>
-  <MudButton Variant=Variant.Filled Color=Color.Primary OnClick=HandleScanQrCodeOnce>掃描QR Code</MudButton>
-
   <AsvtQrCodeReader @ref=@qrcReader NotReadStop=@(!f_readStop) OnResponse=HandleScanResponse />
 
   <p>qrCode(@scanCount):@qrCode</p>
@@ -37,14 +34,6 @@
   {
     base.OnInitialized();
     //qrcSvc.OnScanResponseEvnet += HandleScanResponse;
-  }
-
-  async Task HandleScanQrCodeOnce()
-  {
-    scanCount = warnCount = errorCount = 0;
-
-    // 掃描一次，成功立刻回應。
-    qrCode = await qrcReader.ScanOnceAsync();
   }
 
   async Task HandleScanQrCode()
