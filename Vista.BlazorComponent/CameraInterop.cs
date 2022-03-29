@@ -21,12 +21,13 @@ public sealed class CameraInterop : IAsyncDisposable
 
   #region State
   public bool IsOpen { get; private set; } = false;
+  IJSObjectReference cameraEntity;
   #endregion
 
-  public CameraInterop(IJSRuntime jsRuntime)
+  public CameraInterop(IJSRuntime jsr)
   {
-    moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
-       "import", "./_content/Vista.BlazorComponent/tools/cameraTools.js").AsTask());
+    moduleTask = new(() => jsr.InvokeAsync<IJSObjectReference>(
+       "import", "./_content/Vista.BlazorComponent/tools/CameraModule.js").AsTask());
 
     dotNetObject = new(DotNetObjectReference.Create(this));
   }
@@ -34,6 +35,11 @@ public sealed class CameraInterop : IAsyncDisposable
   #region Dispose
   public async ValueTask DisposeAsync()
   {
+    if (cameraEntity != null)
+    {
+      await cameraEntity.DisposeAsync();
+    }
+
     if (moduleTask.IsValueCreated)
     {
       var module = await moduleTask.Value;
@@ -49,22 +55,26 @@ public sealed class CameraInterop : IAsyncDisposable
 
   public async Task StartCameraAsync(ElementReference videoElement)
   {
-    var module = await moduleTask.Value;
-    await module.InvokeVoidAsync("startCamera", dotNetObject.Value, videoElement);
+    if (cameraEntity != null)
+      await cameraEntity.DisposeAsync();
+
+    var fileModule = await moduleTask.Value;
+    cameraEntity = await fileModule.InvokeAsync<IJSObjectReference>("CameraModule", dotNetObject.Value, videoElement);
+    await cameraEntity.InvokeVoidAsync("startCamera");
     IsOpen = true;
   }
 
   public async Task StopCameraAsync()
   {
-    var module = await moduleTask.Value;
-    await module.InvokeVoidAsync("stopCamera", dotNetObject.Value);
+    if (cameraEntity == null) return;
+    await cameraEntity.InvokeVoidAsync("stopCamera");
     IsOpen = false;
   }
 
   public async Task TakePhotoAsync()
   {
-    var module = await moduleTask.Value;
-    await module.InvokeVoidAsync("takePhoto", dotNetObject.Value);
+    if (cameraEntity == null) return;
+    await cameraEntity.InvokeVoidAsync("takePhoto");
   }
 
   [JSInvokable("OnCameraResponse")]
