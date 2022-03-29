@@ -21,6 +21,7 @@ builder.Services.AddScoped(sp => new HttpClient
 
 builder.Services.AddScoped<WebApiService>();
 builder.Services.AddScoped<StateContainer>();
+builder.Services.AddScoped<JSFooService>();
 
 #endregion --------------------------------------------------------------------
 
