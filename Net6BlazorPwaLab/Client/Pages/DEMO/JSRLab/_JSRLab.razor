@@ -1,0 +1,22 @@
+﻿@page "/jsrlab"
+@inject JSFooService jsFoo
+
+<h3>JSR Lab</h3>
+<button @onclick=CallAction >Call Action</button>
+
+@code {
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    await base.OnAfterRenderAsync(firstRender);
+    if (firstRender)
+    {
+      await jsFoo.ImportAsync();
+    }
+  }
+
+  async Task CallAction()
+  {
+    await jsFoo.CallActionAsync();
+  }
+
+}
