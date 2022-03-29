@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 
 namespace Vista.BlazorComponent;
 
-public class QrCodeInterop : IAsyncDisposable
+public class QRCodeInterop : IAsyncDisposable
 {
   #region Resource
   readonly Lazy<Task<IJSObjectReference>> moduleTask;
-  readonly Lazy<DotNetObjectReference<QrCodeInterop>> dotNetObject;
+  readonly Lazy<DotNetObjectReference<QRCodeInterop>> dotNetObject;
   
   public event EventHandler<ScanResponseEvnetArgs> OnScanResponseEvnet;
   public class ScanResponseEvnetArgs : EventArgs
@@ -19,11 +19,11 @@ public class QrCodeInterop : IAsyncDisposable
   #endregion
 
   //## State
-  IJSObjectReference qrcodeModule;
+  IJSObjectReference qrcReader;
 
-  public QrCodeInterop(IJSRuntime jsRuntime)
+  public QRCodeInterop(IJSRuntime jsr)
   {
-    moduleTask = new(() => jsRuntime.InvokeAsync<IJSObjectReference>(
+    moduleTask = new(() => jsr.InvokeAsync<IJSObjectReference>(
        "import", "./_content/Vista.BlazorComponent/tools/QRCodeModule.js").AsTask());
 
     dotNetObject = new(DotNetObjectReference.Create(this));
@@ -31,9 +31,9 @@ public class QrCodeInterop : IAsyncDisposable
 
   public async ValueTask DisposeAsync()
   {
-    if (qrcodeModule != null)
+    if (qrcReader != null)
     {
-      await qrcodeModule.DisposeAsync();
+      await qrcReader.DisposeAsync();
     }
 
     if (moduleTask.IsValueCreated)
@@ -48,23 +48,20 @@ public class QrCodeInterop : IAsyncDisposable
     }
   }
 
-  //public async ValueTask<string> ScanQrCodeOnce(string elementId)
-  //{
-  //  var module = await moduleTask.Value;
-  //  return await module.InvokeAsync<string>("scanQrCodeOnce", elementId);
-  //}
-
   public async Task StartScanAsync(string elementId, bool f_readStop)
   {
+    if (qrcReader != null)
+      await qrcReader.DisposeAsync();
+
     var fileModule = await moduleTask.Value;
-    qrcodeModule = await fileModule.InvokeAsync<IJSObjectReference>("QRCodeModule", elementId);
-    await qrcodeModule.InvokeVoidAsync("startScan", dotNetObject.Value, f_readStop);
+    qrcReader = await fileModule.InvokeAsync<IJSObjectReference>("QRCodeModule", elementId);
+    await qrcReader.InvokeVoidAsync("startScan", dotNetObject.Value, f_readStop);
   }
 
   public async Task StopScanAsync()
   {
-    if (qrcodeModule == null) return;
-    await qrcodeModule.InvokeVoidAsync("stopScan", dotNetObject.Value);
+    if (qrcReader == null) return;
+    await qrcReader.InvokeVoidAsync("stopScan", dotNetObject.Value);
   }
 
   [JSInvokable("OnScanResponse")]

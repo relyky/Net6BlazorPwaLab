@@ -1,4 +1,15 @@
-﻿
+﻿/// <reference path="../html5-qrcode.min.js" />
+/*
+ * 於手機上掃條碼
+ * ref→[html5-qrcode](https://github.com/mebjas/html5-qrcode)
+ * JS module, ES6+
+ *
+ * HTML 應用參考
+<div style="width:600px; max-width:80vw; border:solid 1px darkgrey; background-color:lightgrey; padding:4px; margin: 8px auto; border-radius: 4px;">
+    <div id="qrcodeReader" style="visibility:hidden"></div>
+</div>
+ */
+
 function QRCodeModule(elementId /* string */) {
   const targetElement = document.getElementById(elementId);
   const qrcodeReader = new Html5Qrcode(elementId, { formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE] });
