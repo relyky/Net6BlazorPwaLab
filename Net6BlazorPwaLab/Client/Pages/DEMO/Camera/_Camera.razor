@@ -20,15 +20,6 @@
     </TakeIcon>
   </AsvtCameraPhoto>
 
-  @*  <AsvtCameraPhoto @ref=@cameraRef OnResponse=HandleCameraResponse>
-    <TakeIcon>
-    <MudIcon Icon=@Icons.Filled.PhotoCamera Color=Color.Info />
-    </TakeIcon>
-    </AsvtCameraPhoto>
-  *@
-  @* needed if you want to display the image when you take a photo
-    <img alt="photo picture" src=@photoDataUri class="img-fluid img-thumbnail mx-auto d-block">
-  *@
 
   @* needed if you want to display the image when you take a photo *@
   @if (!String.IsNullOrWhiteSpace(photoDataUri))
@@ -69,11 +60,9 @@
     {
       case "SUCCESS":
         message = args.message;
-        StateHasChanged();
         break;
       case "STOP":
         message = args.message;
-        StateHasChanged();
         break;
       case "PHOTO":
         photoDataUri = args.message;
@@ -85,7 +74,6 @@
         break;
       default:
         message = args.message;
-        StateHasChanged();
         break;
     }
   }
