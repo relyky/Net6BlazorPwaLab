@@ -7,8 +7,8 @@
   <MudText Typo=Typo.h3>展示 HTML Geolocation API</MudText>
   <MudText Typo=Typo.body1>展示取得地理資訊能力。需支援HTML5以上瀏灠器。</MudText>
 
-  <MudButton Variant=Variant.Outlined Color=Color.Primary OnClick=GetLocation>取得地理位置</MudButton>
-  <MudSwitch Color=Color.Primary @bind-Checked=@f_open Label="監看地理位置 " />
+  <MudButton Variant=Variant.Outlined Color=Color.Primary OnClick=GetLocation>取得現在地理位置</MudButton>
+  <MudSwitch Color=Color.Primary @bind-Checked=@f_open Label="監看現在地理位置 " />
 
   @if (f_loading)
   {
@@ -34,12 +34,14 @@
     <AsvtGeoLocationWatcher @bind-Open=@f_open Context="position">
       @if (position != null)
       {
-        <p>@($"經度：{position.Coords.Longitude} 緯度：{position.Coords.Latitude} 更新時間：{position.TimestampOffset:HH:mm:ss}")</p>
+        string mapUrl = $"https://www.google.com/maps/@{position.Coords.Latitude},{position.Coords.Longitude},1000m/data=!3m1!1e3?hl=zh-TW";
+        <MudText Typo=Typo.body1>
+          @($"緯度：{position.Coords.Latitude} 經度：{position.Coords.Longitude} 更新時間：{position.TimestampOffset:HH:mm:ss}")<br />
+          <MudLink Target="_blank" Href=@mapUrl Underline=Underline.Always>使用Google Map開啟</MudLink>。
+        </MudText>
       }
     </AsvtGeoLocationWatcher>
   </MudPaper>
-
-
 </MudContainer>
 
 @code {
