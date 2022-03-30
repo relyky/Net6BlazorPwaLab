@@ -6,7 +6,6 @@
 <MudContainer>
   <MudText Typo=Typo.h3>展示 HTML Geolocation API</MudText>
   <MudText Typo=Typo.body1>展示取得地理資訊能力。需支援HTML5以上瀏灠器。</MudText>
-
   <MudButton Variant=Variant.Outlined Color=Color.Primary OnClick=GetLocation>取得地理位置</MudButton>
 
   @if (f_loading)
@@ -19,25 +18,40 @@
     <MudAlert Severity=Severity.Error>@errMsg</MudAlert>
   }
 
-  <pre>
-    地理位置
-    @position?.ToJson()
-  </pre>
+  @if (currentPosition != null)
+  {
+    <MudAlert Severity=Severity.Info>
+      <MudText Typo=Typo.subtitle1>地理位置</MudText>
+      <MudText Typo=Typo.body2>
+        <pre>@currentPosition?.ToJson()</pre>
+      </MudText>
+    </MudAlert>
+  }
+
+
+  <AsvtGeoLocationWatcher Context="position">
+    @position.ToJson()
+
+
+    <MudChip Variant=Variant.Outlined Color=Color.Warning>刷新次數:@(renderCount++)</MudChip>
+  </AsvtGeoLocationWatcher>
 
 </MudContainer>
 
 @code {
   //## State
   bool f_loading = false;
-  GeoLocationInterop.GeolocationPosition? position = null;
+  GeoLocationInterop.GeolocationPosition? currentPosition = null;
   string errMsg = string.Empty;
+
+  int renderCount = 0;
 
   async Task GetLocation(MouseEventArgs e)
   {
     try
     {
       f_loading = true;
-      position = await geoSvc.getLocationAsync();
+      currentPosition = await geoSvc.getLocationAsync();
     }
     catch (Exception ex)
     {

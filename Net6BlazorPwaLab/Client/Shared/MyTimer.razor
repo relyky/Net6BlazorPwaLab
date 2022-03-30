@@ -1,0 +1,43 @@
+﻿@implements IDisposable
+
+<MudPaper Elevation=25 Class="pa-4 ma-2">
+  @ChildContent(now)
+</MudPaper>
+
+@code {
+  [Parameter, EditorRequired] public RenderFragment<DateTime> ChildContent { get; set; }
+
+  //## State
+  DateTime now = DateTime.Now;
+
+  //## Resource
+  System.Timers.Timer timer;
+
+  public void Dispose()
+  {
+    /// ※ 別忘記要釋放 timer 否則會變成無人管理的流浪資源。
+    timer?.Dispose();
+  }
+
+  protected override void OnAfterRender(bool firstRender)
+  {
+    base.OnAfterRender(firstRender);
+
+    /// ※ timer 的初始化在 firstRender 執行
+    if (firstRender)
+    {
+      timer = new();
+      timer.Interval = 1000;
+      timer.Elapsed += OnTimerInterval;
+      timer.AutoReset = true;
+      // Start the timer
+      timer.Enabled = true;
+    }
+  }
+
+  void OnTimerInterval(object sender, System.Timers.ElapsedEventArgs e)
+  {
+    now = DateTime.Now;
+    StateHasChanged();
+  }
+}
