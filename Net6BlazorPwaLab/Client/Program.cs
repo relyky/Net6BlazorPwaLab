@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 using Net6BlazorPwaLab.Client;
 using Net6BlazorPwaLab.Client.Services;
+using Vista.BlazorComponent;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -21,7 +22,7 @@ builder.Services.AddScoped(sp => new HttpClient
 
 builder.Services.AddScoped<WebApiService>();
 builder.Services.AddScoped<StateContainer>();
-builder.Services.AddScoped<JSFooService>();
+builder.Services.AddScoped<GeoLocationInterop>();
 
 #endregion --------------------------------------------------------------------
 

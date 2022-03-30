@@ -1,0 +1,51 @@
+﻿@page "/geolocation"
+@inject GeoLocationInterop geoSvc;
+
+<PageTitle>展示 HTML Geolocation API</PageTitle>
+
+<MudContainer>
+  <MudText Typo=Typo.h3>展示 HTML Geolocation API</MudText>
+  <MudText Typo=Typo.body1>展示取得地理資訊能力。需支援HTML5以上瀏灠器。</MudText>
+
+  <MudButton Variant=Variant.Outlined Color=Color.Primary OnClick=GetLocation>取得地理位置</MudButton>
+
+  @if (f_loading)
+  {
+    <MudProgressLinear Color=Color.Info Indeterminate />
+  }
+
+  @if (!String.IsNullOrWhiteSpace(errMsg))
+  {
+    <MudAlert Severity=Severity.Error>@errMsg</MudAlert>
+  }
+
+  <pre>
+    地理位置
+    @position?.ToJson()
+  </pre>
+
+</MudContainer>
+
+@code {
+  //## State
+  bool f_loading = false;
+  GeoLocationInterop.GeolocationPosition? position = null;
+  string errMsg = string.Empty;
+
+  async Task GetLocation(MouseEventArgs e)
+  {
+    try
+    {
+      f_loading = true;
+      position = await geoSvc.getLocationAsync();
+    }
+    catch (Exception ex)
+    {
+      errMsg = ex.Message;
+    }
+    finally
+    {
+      f_loading = false;
+    }
+  }
+}
