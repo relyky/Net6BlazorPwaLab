@@ -30,8 +30,8 @@
 
 
   <AsvtGeoLocationWatcher Context="position">
-    @position.ToJson()
-
+    
+    @position?.ToJson()
 
     <MudChip Variant=Variant.Outlined Color=Color.Warning>刷新次數:@(renderCount++)</MudChip>
   </AsvtGeoLocationWatcher>
@@ -51,7 +51,7 @@
     try
     {
       f_loading = true;
-      currentPosition = await geoSvc.getLocationAsync();
+      currentPosition = await geoSvc.GetLocationAsync();
     }
     catch (Exception ex)
     {

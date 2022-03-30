@@ -9,10 +9,12 @@ namespace Vista.BlazorComponent;
 
 public sealed class GeoLocationInterop : IAsyncDisposable
 {
-  #region Resource
+  //## Resource
   readonly Lazy<Task<IJSObjectReference>> moduleTask;
   readonly Lazy<DotNetObjectReference<GeoLocationInterop>> dotNetObject;
-  #endregion
+
+  //## State
+  public event EventHandler<WatchResponseEvnetArgs> OnWatchResponseEvnet;
 
   #region nest class
   /// <summary>
@@ -77,6 +79,11 @@ public sealed class GeoLocationInterop : IAsyncDisposable
     /// </summary>
     public double? Speed { get; set; }
   }
+
+  public class WatchResponseEvnetArgs : EventArgs
+  {
+    public GeolocationPosition Position { get; set; }
+  }
   #endregion
 
   public GeoLocationInterop(IJSRuntime jsr)
@@ -103,12 +110,12 @@ public sealed class GeoLocationInterop : IAsyncDisposable
   }
   #endregion
 
-  public async Task<GeolocationPosition> getLocationAsync()
+  public async Task<GeolocationPosition> GetLocationAsync()
   {
     try
     {
       var module = await moduleTask.Value;
-      var position = await module.InvokeAsync<GeolocationPosition>("getLocation", dotNetObject.Value);
+      var position = await module.InvokeAsync<GeolocationPosition>("getLocation");
       return position;
     }
     catch (JSException ex)
@@ -116,4 +123,34 @@ public sealed class GeoLocationInterop : IAsyncDisposable
       throw new ApplicationException(ex.Message, ex);
     }
   }
+
+  /// <summary>
+  /// To start watch geo-location position periodically.
+  /// </summary>
+  public async Task<int> StartWatchAsync()
+  {
+    try
+    {
+      var module = await moduleTask.Value;
+      int watchId = await module.InvokeAsync<int>("watchPosition", dotNetObject.Value);
+      return watchId;
+    }
+    catch (JSException ex)
+    {
+      throw new ApplicationException(ex.Message, ex);
+    }
+  }
+
+  public Task StopWatchAsync(int watchId)
+  {
+    throw new NotImplementedException();
+  }
+
+  [JSInvokable("OnWatchResponse")]
+  public Task<int> HandleWatchResponse(GeolocationPosition position)
+  {
+    OnWatchResponseEvnet?.Invoke(this, new WatchResponseEvnetArgs { Position = position });
+    return Task.FromResult(0);
+  }
+
 }
