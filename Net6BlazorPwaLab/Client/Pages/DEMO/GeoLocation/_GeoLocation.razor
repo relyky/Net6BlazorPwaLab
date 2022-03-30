@@ -6,7 +6,9 @@
 <MudContainer>
   <MudText Typo=Typo.h3>展示 HTML Geolocation API</MudText>
   <MudText Typo=Typo.body1>展示取得地理資訊能力。需支援HTML5以上瀏灠器。</MudText>
+
   <MudButton Variant=Variant.Outlined Color=Color.Primary OnClick=GetLocation>取得地理位置</MudButton>
+  <MudSwitch Color=Color.Primary @bind-Checked=@f_open Label="監看地理位置 " />
 
   @if (f_loading)
   {
@@ -28,23 +30,24 @@
     </MudAlert>
   }
 
+  <MudPaper Class="pa-2 my-2">
+    <AsvtGeoLocationWatcher @bind-Open=@f_open Context="position">
+      @if (position != null)
+      {
+        <p>@($"經度：{position.Coords.Longitude} 緯度：{position.Coords.Latitude} 更新時間：{position.TimestampOffset:HH:mm:ss}")</p>
+      }
+    </AsvtGeoLocationWatcher>
+  </MudPaper>
 
-  <AsvtGeoLocationWatcher Context="position">
-    
-    @position?.ToJson()
-
-    <MudChip Variant=Variant.Outlined Color=Color.Warning>刷新次數:@(renderCount++)</MudChip>
-  </AsvtGeoLocationWatcher>
 
 </MudContainer>
 
 @code {
   //## State
+  bool f_open = false;
   bool f_loading = false;
   GeoLocationInterop.GeolocationPosition? currentPosition = null;
   string errMsg = string.Empty;
-
-  int renderCount = 0;
 
   async Task GetLocation(MouseEventArgs e)
   {

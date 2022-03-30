@@ -90,3 +90,11 @@ export function watchPosition(dotNetObject)
     throw 'Geolocation is not supported by this browser.';
   }
 }
+
+export function clearWatch(watchId) {
+  if (navigator.geolocation) {
+    navigator.geolocation.clearWatch(watchId)
+  } else {
+    throw 'Geolocation is not supported by this browser.';
+  }
+}

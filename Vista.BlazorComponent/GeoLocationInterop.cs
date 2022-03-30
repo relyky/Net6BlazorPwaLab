@@ -36,7 +36,7 @@ public sealed class GeoLocationInterop : IAsyncDisposable
     /// The <see cref="DateTimeOffset"/> derived from the <see cref="Timestamp"/>, in UTC.
     /// </summary>
     [JsonIgnore]
-    public DateTimeOffset DateTimeOffset => DateTimeOffset.FromUnixTimeMilliseconds(Timestamp);
+    public DateTimeOffset TimestampOffset => DateTimeOffset.FromUnixTimeMilliseconds(Timestamp).ToLocalTime();
   }
 
   /// <summary>
@@ -45,12 +45,12 @@ public sealed class GeoLocationInterop : IAsyncDisposable
   public class GeolocationCoordinates
   {
     /// <summary>
-    /// Latitude in decimal degrees.
+    /// 緯度, Latitude in decimal degrees.
     /// </summary>
     public double Latitude { get; set; }
 
     /// <summary>
-    /// Longitude in decimal degrees.
+    /// 經度, Longitude in decimal degrees.
     /// </summary>
     public double Longitude { get; set; }
 
@@ -141,9 +141,17 @@ public sealed class GeoLocationInterop : IAsyncDisposable
     }
   }
 
-  public Task StopWatchAsync(int watchId)
+  public async Task StopWatchAsync(int watchId)
   {
-    throw new NotImplementedException();
+    try
+    {
+      var module = await moduleTask.Value;
+      await module.InvokeVoidAsync("clearWatch", watchId);
+    }
+    catch (JSException ex)
+    {
+      throw new ApplicationException(ex.Message, ex);
+    }
   }
 
   [JSInvokable("OnWatchResponse")]

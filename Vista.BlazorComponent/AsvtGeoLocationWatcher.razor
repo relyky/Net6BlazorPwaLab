@@ -2,16 +2,24 @@
 @inject IJSRuntime jsr
 
 <div class="geolocation-containter">
-  WatchId:@($"{WatchId}")
+  @* for DEBUG *@
+  watchId:@($"{watchId}({watchCounter})")
+  
   @ChildContent(Position)
 </div>
 
 @code {
-  [Parameter, EditorRequired] public RenderFragment<GeoLocationInterop.GeolocationPosition?> ChildContent { get; set; }
+  [Parameter] public RenderFragment<GeoLocationInterop.GeolocationPosition?> ChildContent { get; set; }
+  [Parameter] public bool Open { get; set; }
+  [Parameter] public EventCallback<bool> OpenChanged { get; set; }
 
   //## State
   GeoLocationInterop.GeolocationPosition? Position = null;
-  public int WatchId = -1;
+  int watchId = -1;
+  int watchCounter = 0; 
+
+  //## Property
+  public bool IsWatching => watchId > 0;
 
   //## Resource
   GeoLocationInterop geoSvc;
@@ -28,18 +36,27 @@
     geoSvc.OnWatchResponseEvnet += HandleWatchResponse;
   }
 
-  protected override async Task OnAfterRenderAsync(bool firstRender)
+  protected override async Task OnParametersSetAsync()
   {
-    await base.OnAfterRenderAsync(firstRender);
-    if (firstRender)
+    await base.OnParametersSetAsync();
+    if (Open && !IsWatching)
     {
-      // WatchId = await geoSvc.StartWatchAsync();
+      watchId = await geoSvc.StartWatchAsync();
+      watchCounter = 0;
+      await OpenChanged.InvokeAsync(true);
+    }
+    if (!Open && IsWatching)
+    {
+      await geoSvc.StopWatchAsync(watchId);
+      watchId = -1;
+      await OpenChanged.InvokeAsync(false);
     }
   }
 
   void HandleWatchResponse(object sender, GeoLocationInterop.WatchResponseEvnetArgs e)
   {
     Position = e.Position;
+    watchCounter++;
     StateHasChanged();
   }
 }
