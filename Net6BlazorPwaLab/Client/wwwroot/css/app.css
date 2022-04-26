@@ -37,6 +37,21 @@ a, .btn-link {
 
 */
 
+/* custom-datalist */
+.custom-datalist + .mud-select.mud-autocomplete {
+  display: inline-block;
+}
+
+  .custom-datalist + .mud-select.mud-autocomplete .mud-input.mud-input-outlined.mud-input-adorned-end {
+    padding-right: 0.5em;
+    padding-inline-end: 0.5em;
+  }
+
+  .custom-datalist + .mud-select.mud-autocomplete input.mud-input-slot {
+    padding: 0.25em 0 0.25em 0.5em;
+  }
+
+/* =============================== */
 .text-ellipsis {
   white-space: nowrap;
   text-overflow: ellipsis;

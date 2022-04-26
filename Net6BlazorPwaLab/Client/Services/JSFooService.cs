@@ -13,8 +13,6 @@ public class JSFooService
 
   //# resource
   IJSObjectReference jsModule;
-
-  //#
   IJSObjectReference bar1, bar2;
 
   public JSFooService(IJSRuntime _jsr)
@@ -29,12 +27,11 @@ public class JSFooService
     bar2 = await jsModule.InvokeAsync<IJSObjectReference>("Bar", "barB");
   }
 
-  public async Task CallActionAsync()
+  public async Task<string> CallActionAsync()
   {
     string str3 = await bar1.InvokeAsync<string>("toString");
     string str4 = await bar2.InvokeAsync<string>("toString");
-
-    await Task.Delay(100);
+    return $"{str3}:{str4}";
   }
 
 }

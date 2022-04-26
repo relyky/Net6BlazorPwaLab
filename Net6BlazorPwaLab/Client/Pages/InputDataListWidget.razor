@@ -1,0 +1,35 @@
+﻿
+<span class="custom-datalist"></span> @* 只是用來定位 MudAutocomplete 以調校 style *@
+<MudAutocomplete T=string @bind-Value=@value1 Dense Clearable 
+                 SearchFunc=@HandleSearch Margin=Margin.Dense Variant=Variant.Outlined />
+
+@code {
+  private string value1;
+  private string[] states = {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+    };
+
+  private async Task<IEnumerable<string>> HandleSearch(string value)
+  {
+    //await Task.Delay(5);
+
+    // if text is null or empty, show complete list
+    if (string.IsNullOrEmpty(value))
+      return states;
+
+    return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+  }
+}

@@ -3,8 +3,11 @@
 
 <h3>JSR Lab</h3>
 <button @onclick=CallAction >Call Action</button>
+<p>@message</p>
 
 @code {
+  string message = "[empty]";
+
   protected override async Task OnAfterRenderAsync(bool firstRender)
   {
     await base.OnAfterRenderAsync(firstRender);
@@ -16,7 +19,7 @@
 
   async Task CallAction()
   {
-    await jsFoo.CallActionAsync();
+    message = await jsFoo.CallActionAsync();
   }
 
 }

@@ -3,24 +3,39 @@
 <PageTitle>Counter</PageTitle>
 
 <MudContainer>
-    <MudText Typo=Typo.h3>Counter</MudText>
+  <MudText Typo=Typo.h3>Counter</MudText>
 
-    <MudText Typo=Typo.body1>Current count: @currentCount</MudText>
-    <MudButton Variant=Variant.Filled Color=Color.Primary OnClick=IncrementCount>累加１</MudButton>
-    <MudButton Variant=Variant.Filled Color=Color.Primary OnClick=ThrowTestingException>丟出例外</MudButton>
+  <MudText Typo=Typo.body1>Current count: @currentCount</MudText>
+  <MudButton Variant=Variant.Filled Color=Color.Primary OnClick=IncrementCount>累加１</MudButton>
+  <MudButton Variant=Variant.Filled Color=Color.Primary OnClick=ThrowTestingException>丟出例外</MudButton>
+
+  <br />
+
+  開頭文字
+   <InputDataListWidget />
+  結尾文字
+    <MudInput Variant=Variant.Outlined T=string Margin=Margin.None UserAttributes=@InputAttributes />
+  開頭文字
+   <InputDataListWidget />
+
 </MudContainer>
 
 @code {
-    //## State
-    int currentCount = 0;
+  //## State
+  int currentCount = 0;
 
-    void IncrementCount(MouseEventArgs e)
-    {
-        currentCount++;
-    }
+  void IncrementCount(MouseEventArgs e)
+  {
+    currentCount++;
+  }
 
-    void ThrowTestingException(MouseEventArgs e)
-    {
-        throw new ApplicationException("測試例外狀況。");
-    }
+  void ThrowTestingException(MouseEventArgs e)
+  {
+    throw new ApplicationException("測試例外狀況。");
+  }
+
+  ////////////
+  //## resource
+  Dictionary<string, object> InputAttributes = new() { { "style", "padding: 0.25em 0.5em;" } };
+
 }
