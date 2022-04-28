@@ -14,6 +14,8 @@ namespace MyGrpcService.Services
 
     public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
     {
+      Console.WriteLine("[Receive] SayHello");
+
       return Task.FromResult(new HelloReply
       {
         Message = "Hello " + request.Name
@@ -23,10 +25,13 @@ namespace MyGrpcService.Services
     /// <summary>
     /// 測試：主機端串流 RPC (server-side streaming RPC)
     /// </summary>
-    public override async Task DownloadCv(DownloadByName request
-      , IServerStreamWriter<Candidate> responseStream
-      , ServerCallContext context)
+    public override async Task DownloadCv(
+        DownloadByName request, 
+        IServerStreamWriter<Candidate> responseStream, 
+        ServerCallContext context)
     {
+      Console.WriteLine("[Receive] DownloadCv");
+
       // 模擬
       RepeatedField<Job> jobList = new();
       jobList.Add(new Job { Title = "註冊護士", Salary = 17859, JobDescription = "第一位" });
@@ -54,6 +59,37 @@ namespace MyGrpcService.Services
       Candidate new3 = new() { Name = $"{request.Name}#3" };
       new3.Jobs.AddRange(jobList);
       await responseStream.WriteAsync(new3);
+    }
+
+    /// <summary>
+    /// 測試：用戶端串流 RPC (client-side streaming RPC)
+    /// </summary>
+    public override async Task<CreateCvResponse> CreateCv(
+        IAsyncStreamReader<Candidate> requestStream, 
+        ServerCallContext context)
+    {
+      Console.WriteLine("[Receive] CreateCv");
+
+      var result = new CreateCvResponse
+      {
+        IsSuccess = false
+      };
+
+      // stream 讀取
+      int counter = 0;
+      while (await requestStream.MoveNext())
+      {
+        var candidate = requestStream.Current;
+        counter++;
+
+        // 實際處理
+        Console.WriteLine("\t" + candidate.Name);
+      }
+
+      // Success
+      result.Count = counter;
+      result.IsSuccess = true;
+      return result;
     }
   }
 }
