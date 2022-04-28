@@ -8,14 +8,33 @@ package greet;
 service Greeter {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply);
+
+  // ¥D¾÷ºÝ¦ê¬y RPC (server-side streaming RPC)
+  rpc DownloadCv (DownloadByName) returns (stream Candidate);
 }
 
-// The request message containing the user's name.
+// The [SayHello] request message
 message HelloRequest {
   string name = 1;
 }
 
-// The response message containing the greetings.
+// The [SayHello] response message
 message HelloReply {
   string message = 1;
+}
+
+// The [DownloadCv] message
+message DownloadByName {
+    string Name = 1;
+}
+
+message Candidate {
+    string Name = 1;
+    repeated Job Jobs = 2;
+}
+
+message Job {
+    string Title = 1;
+    int32 Salary = 2;
+    string JobDescription = 3;
 }
