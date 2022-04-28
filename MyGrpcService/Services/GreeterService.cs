@@ -12,6 +12,9 @@ namespace MyGrpcService.Services
       _logger = logger;
     }
 
+    /// <summary>
+    /// 練習：基本溝通
+    /// </summary>
     public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
     {
       Console.WriteLine("[Receive] SayHello");
@@ -23,7 +26,7 @@ namespace MyGrpcService.Services
     }
 
     /// <summary>
-    /// 測試：主機端串流 RPC (server-side streaming RPC)
+    /// 練習：主機端串流 RPC (server-side streaming RPC)
     /// </summary>
     public override async Task DownloadCv(
         DownloadByName request, 
@@ -62,7 +65,7 @@ namespace MyGrpcService.Services
     }
 
     /// <summary>
-    /// 測試：用戶端串流 RPC (client-side streaming RPC)
+    /// 練習：用戶端串流 RPC (client-side streaming RPC)
     /// </summary>
     public override async Task<CreateCvResponse> CreateCv(
         IAsyncStreamReader<Candidate> requestStream, 
@@ -90,6 +93,26 @@ namespace MyGrpcService.Services
       result.Count = counter;
       result.IsSuccess = true;
       return result;
+    }
+
+    /// <summary>
+    /// 練習：雙向串流 RPC (bidirectional streaming RPC)
+    /// </summary>
+    public override async Task CreateDownloadCv(
+      IAsyncStreamReader<Candidate> requestStream, 
+      IServerStreamWriter<Candidate> responseStream, 
+      ServerCallContext context)
+    {
+      // 將收到的資料逐一取出
+      while (await requestStream.MoveNext())
+      {
+        // 逐筆取得並處理
+        var item = requestStream.Current;
+        item.Name = $"item.Name:已處理";
+        
+        // 將處理後的資料回傳
+        await responseStream.WriteAsync(item);
+      }
     }
   }
 }
