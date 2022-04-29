@@ -11,7 +11,7 @@
 
 <div class="pdfjs-viewer">
   <h3>pdfjs lab</h3>
-  <canvas class="the-canvas" @ref=@theCanvasRef></canvas>
+  <canvas id="the-canvas" class="the-canvas" @ref=@theCanvasRef></canvas>
 
   <button @onclick=HandleClick >Test</button>
   <p>@message</p>
@@ -26,7 +26,7 @@
 
   // Resource
   ElementReference theCanvasRef;
-  PdfToolJsInterop? pdfSvc;
+  PdfToolJsInterop pdfSvc;
 
   public void Dispose()
   {
@@ -40,14 +40,13 @@
     //geoSvc.OnWatchResponseEvnet += HandleWatchResponse;
   }
 
-  protected override async Task OnInitializedAsync()
-  {
-    await base.OnInitializedAsync();
-  }
-
   protected override async Task OnAfterRenderAsync(bool firstRender)
   {
     await base.OnAfterRenderAsync(firstRender);
+    if (firstRender)
+    {
+      await pdfSvc.InitAsync();
+    }
   }
 
   async Task HandleClick()
