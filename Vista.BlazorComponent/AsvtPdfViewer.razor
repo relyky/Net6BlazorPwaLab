@@ -10,12 +10,13 @@
 @inject IJSRuntime jsr
 
 <div class="pdfjs-viewer">
-  <h3>pdfjs lab</h3>
   <canvas id="the-canvas" class="the-canvas" @ref=@theCanvasRef></canvas>
-
-  <button @onclick=HandleClick >Test</button>
-  <p>@message</p>
 </div>
+<button type="button" onclick="printJS('docs/printjs.pdf')">
+  Print PDF
+</button>
+<button @onclick=PrintPdf>列印</button>
+<p>@message</p>
 
 @code {
   [Parameter] public string Url { get; set; } = string.Empty;
@@ -47,6 +48,29 @@
     {
       await pdfSvc.InitAsync();
     }
+  }
+
+  async Task PrintPdf()
+  {
+    //## 以 URL 送印 PDF
+    string url = "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf";
+    await jsr.InvokeVoidAsync("printJS", url);
+    message = "已送印";
+
+    #region ## 以 base64 格式送印 PDF
+    ////# make html with data.
+    //string html = biz.MakeHtmlPage(/* data */);
+    //byte[] fileBlob = biz.HtmlToPdf(html);
+    //
+    ////# binary 轉換成 base64
+    //string base64 = Convert.ToBase64String(fileBlob);
+    //await jsr.InvokeVoidAsync("printJS", new
+    //{
+    //  printable = base64,
+    //  type = "pdf",
+    //  base64 = true
+    //});
+    #endregion
   }
 
   async Task HandleClick()
