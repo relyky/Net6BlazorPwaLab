@@ -23,6 +23,7 @@ builder.Services.AddScoped(sp => new HttpClient
 builder.Services.AddScoped<WebApiService>();
 builder.Services.AddScoped<StateContainer>();
 builder.Services.AddScoped<GeoLocationInterop>();
+builder.Services.AddScoped<PdfToolJsInterop>();
 builder.Services.AddScoped<JSFooService>();
 
 #endregion --------------------------------------------------------------------

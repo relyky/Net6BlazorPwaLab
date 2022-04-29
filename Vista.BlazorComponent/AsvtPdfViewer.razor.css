@@ -1,0 +1,8 @@
+﻿.pdfjs-viewer {
+  margin: 8px;
+}
+
+  .pdfjs-viewer > .the-canvas {
+    border: 1px solid black;
+    direction: ltr;
+  }

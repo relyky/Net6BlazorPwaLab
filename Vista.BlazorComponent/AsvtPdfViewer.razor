@@ -1,0 +1,57 @@
+﻿@* 應用範例
+  <PdfJsViewer
+  Url="https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf"
+  Print
+  />
+  <script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
+*@
+
+@implements IDisposable
+@inject IJSRuntime jsr
+
+<div class="pdfjs-viewer">
+  <h3>pdfjs lab</h3>
+  <canvas class="the-canvas" @ref=@theCanvasRef></canvas>
+
+  <button @onclick=HandleClick >Test</button>
+  <p>@message</p>
+</div>
+
+@code {
+  [Parameter] public string Url { get; set; } = string.Empty;
+  [Parameter] public bool Print { get; set; } = false;
+
+  // State
+  string message = "[Empty]";
+
+  // Resource
+  ElementReference theCanvasRef;
+  PdfToolJsInterop? pdfSvc;
+
+  public void Dispose()
+  {
+    pdfSvc?.DisposeAsync();
+  }
+
+  protected override void OnInitialized()
+  {
+    base.OnInitialized();
+    pdfSvc = new PdfToolJsInterop(jsr);
+    //geoSvc.OnWatchResponseEvnet += HandleWatchResponse;
+  }
+
+  protected override async Task OnInitializedAsync()
+  {
+    await base.OnInitializedAsync();
+  }
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    await base.OnAfterRenderAsync(firstRender);
+  }
+
+  async Task HandleClick()
+  {
+    message = await pdfSvc.Prompt("test go");
+  }
+}
