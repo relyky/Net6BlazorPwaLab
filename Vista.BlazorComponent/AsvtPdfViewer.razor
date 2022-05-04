@@ -1,7 +1,6 @@
 ﻿@* 應用範例
   <PdfJsViewer
   Url="https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf"
-  Print
   />
   <script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
 *@
@@ -9,13 +8,11 @@
 @implements IDisposable
 @inject IJSRuntime jsr
 
+<h3>基本功能測試</h3>
 <div class="pdfjs-viewer">
   <canvas id="the-canvas" class="the-canvas" @ref=@theCanvasRef></canvas>
 </div>
-<button type="button" onclick="printJS('docs/printjs.pdf')">
-  Print PDF
-</button>
-<button @onclick=PrintPdf>列印</button>
+<button style="background-color:cadetblue;" @onclick=PrintPdf>列印</button>
 <p>@message</p>
 
 @code {
@@ -38,7 +35,6 @@
   {
     base.OnInitialized();
     pdfSvc = new PdfToolJsInterop(jsr);
-    //geoSvc.OnWatchResponseEvnet += HandleWatchResponse;
   }
 
   protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -47,6 +43,10 @@
     if (firstRender)
     {
       await pdfSvc.InitAsync();
+
+      //## 以 URL 送印 PDF
+      string url = "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf";
+      await pdfSvc.RenderPdfAsync(url);
     }
   }
 
@@ -71,10 +71,5 @@
     //  base64 = true
     //});
     #endregion
-  }
-
-  async Task HandleClick()
-  {
-    message = await pdfSvc.Prompt("test go");
   }
 }

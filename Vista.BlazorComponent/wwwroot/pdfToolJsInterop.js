@@ -1,53 +1,53 @@
-﻿
-export function showPrompt(message) {
-  return prompt(message, 'PDF Type anything here');
-}
+﻿/// 參考：[PDF.js](https://mozilla.github.io/pdf.js/getting_started/)
 
 export function init() {
   console.log('pdfToolJsInterop init');
 
-  // If absolute URL from the remote server is provided, configure the CORS
-  // header on that server.
-  var url = 'https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/examples/learning/helloworld.pdf';
 
   // Loaded via <script> tag, create shortcut to access PDF.js exports.
-  var pdfjsLib = window['pdfjs-dist/build/pdf'];
+  const pdfjsLib = window['pdfjs-dist/build/pdf'];
 
   // The workerSrc property shall be specified.
   //pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
+  pdfjsLib.GlobalWorkerOptions.workerSrc = '_content/Vista.BlazorComponent/pdfjs-dist/pdf.worker.min.js';
+}
+
+export function renderPdf(url) {
+  // Loaded via <script> tag, create shortcut to access PDF.js exports.
+  const pdfjsLib = window['pdfjs-dist/build/pdf'];
 
   // Asynchronous download of PDF
-  var loadingTask = pdfjsLib.getDocument(url);
+  const loadingTask = pdfjsLib.getDocument(url);
   loadingTask.promise.then(function (pdf) {
 
     // Fetch the first page
-    var pageNumber = 1;
+    const pageNumber = 1;
     pdf.getPage(pageNumber).then(function (page) {
-      console.log('Page loaded');
+      console.log('renderPdf', 'Page loaded');
 
-      var scale = 1.5;
-      var viewport = page.getViewport({ scale: scale });
+      const scale = 1.5;
+      const viewport = page.getViewport({ scale: scale });
 
       // Prepare canvas using PDF page dimensions
-      var canvas = document.getElementById('the-canvas');
+      const canvas = document.getElementById('the-canvas');
 
-      var context = canvas.getContext('2d');
+      const context = canvas.getContext('2d');
       canvas.height = viewport.height;
       canvas.width = viewport.width;
 
       // Render PDF page into canvas context
-      var renderContext = {
+      const renderContext = {
         canvasContext: context,
         viewport: viewport
       };
-      var renderTask = page.render(renderContext);
+      const renderTask = page.render(renderContext);
       renderTask.promise.then(function () {
-        console.log('Page rendered');
+        console.log('renderPdf', 'Page rendered');
       });
     });
   }, function (reason) {
     // PDF loading error
-    console.error(reason);
+    console.error('renderPdf', reason);
   });
 
 }

@@ -19,16 +19,16 @@ public class PdfToolJsInterop : IAsyncDisposable
        "import", "./_content/Vista.BlazorComponent/pdfToolJsInterop.js").AsTask());
   }
 
-  public async ValueTask<string> Prompt(string message)
-  {
-    var module = await moduleTask.Value;
-    return await module.InvokeAsync<string>("showPrompt", message);
-  }
-
   public async Task InitAsync()
   {
     var module = await moduleTask.Value;
     await module.InvokeVoidAsync("init");
+  }
+
+  public async Task RenderPdfAsync(string url)
+  {
+    var module = await moduleTask.Value;
+    await module.InvokeVoidAsync("renderPdf", url);
   }
 
   public async ValueTask DisposeAsync()
